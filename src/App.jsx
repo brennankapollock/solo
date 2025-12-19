@@ -1,110 +1,123 @@
 import { useState, useEffect } from 'react'
 import './App.css'
-import MonthView from './components/MonthView'
-import WeekView from './components/WeekView'
-import ListView from './components/ListView'
 import { fetchICalEvents } from './utils/icalFetcher'
+import { format, isToday, isFuture } from 'date-fns'
 
 function App() {
-  const [view, setView] = useState('month')
   const [events, setEvents] = useState([])
-  const [filteredEvents, setFilteredEvents] = useState([])
-  const [activeFilters, setActiveFilters] = useState([])
+  const [activeFilter, setActiveFilter] = useState('all')
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-  // You'll need to replace this with your actual iCloud calendar URL
-  const ICAL_URL = import.meta.env.VITE_ICAL_URL || 'YOUR_ICAL_URL_HERE'
+  const ICAL_URL = import.meta.env.VITE_ICAL_URL || ''
 
   useEffect(() => {
     loadEvents()
   }, [])
 
-  useEffect(() => {
-    filterEvents()
-  }, [events, activeFilters])
-
   const loadEvents = async () => {
     try {
       setLoading(true)
+      setError(null)
+      console.log('Fetching from:', ICAL_URL)
       const fetchedEvents = await fetchICalEvents(ICAL_URL)
+      console.log('Fetched events:', fetchedEvents)
       setEvents(fetchedEvents)
     } catch (error) {
       console.error('Error loading events:', error)
+      setError(error.message)
     } finally {
       setLoading(false)
     }
   }
 
-  const filterEvents = () => {
-    if (activeFilters.length === 0) {
-      setFilteredEvents(events)
-    } else {
-      setFilteredEvents(
-        events.filter(event => activeFilters.includes(event.type))
-      )
-    }
-  }
+  const upcomingEvents = events
+    .filter(e => isFuture(new Date(e.start)) || isToday(new Date(e.start)))
+    .filter(e => activeFilter === 'all' || e.type === activeFilter)
+    .slice(0, 6) // Show max 6 events to fit screen
 
-  const toggleFilter = (filter) => {
-    setActiveFilters(prev =>
-      prev.includes(filter)
-        ? prev.filter(f => f !== filter)
-        : [...prev, filter]
-    )
-  }
-
-  const eventTypes = ['concert', 'rave', 'festival', 'club', 'other']
+  const eventTypes = [
+    { id: 'all', label: 'ALL' },
+    { id: 'concert', label: 'CONCERTS' },
+    { id: 'rave', label: 'RAVES' },
+    { id: 'festival', label: 'FESTIVALS' },
+    { id: 'club', label: 'CLUBS' }
+  ]
 
   return (
-    <div className="app">
-      <header className="app-header">
-        <h1 className="app-title">Events</h1>
+    <div className="magazine">
+      {/* Giant Title Overlay */}
+      <div className="title-overlay">
+        <h1 className="mega-title">EVENTS</h1>
+      </div>
 
-        <div className="view-switcher">
-          <button
-            className={`view-btn ${view === 'month' ? 'active' : ''}`}
-            onClick={() => setView('month')}
-          >
-            Month
-          </button>
-          <button
-            className={`view-btn ${view === 'week' ? 'active' : ''}`}
-            onClick={() => setView('week')}
-          >
-            Week
-          </button>
-          <button
-            className={`view-btn ${view === 'list' ? 'active' : ''}`}
-            onClick={() => setView('list')}
-          >
-            List
-          </button>
-        </div>
+      {/* Top Bar */}
+      <div className="top-bar">
+        <div className="issue">ISSUE 001</div>
+        <div className="tagline">NIGHTLIFE / MUSIC / CULTURE</div>
+      </div>
 
-        <div className="filters">
-          {eventTypes.map(type => (
-            <button
-              key={type}
-              className={`filter-btn ${activeFilters.includes(type) ? 'active' : ''}`}
-              onClick={() => toggleFilter(type)}
-            >
-              {type}
-            </button>
-          ))}
-        </div>
-      </header>
+      {/* Filter Tabs */}
+      <div className="filter-tabs">
+        {eventTypes.map(type => (
+          <button
+            key={type.id}
+            className={`filter-tab ${activeFilter === type.id ? 'active' : ''}`}
+            onClick={() => setActiveFilter(type.id)}
+          >
+            {type.label}
+          </button>
+        ))}
+      </div>
 
-      <main className="app-main">
-        {loading ? (
-          <div className="loading">Loading events...</div>
-        ) : (
-          <>
-            {view === 'month' && <MonthView events={filteredEvents} />}
-            {view === 'week' && <WeekView events={filteredEvents} />}
-            {view === 'list' && <ListView events={filteredEvents} />}
-          </>
+      {/* Main Content Grid */}
+      <div className="content-grid">
+        {loading && (
+          <div className="loading-state">
+            <div className="loading-text">LOADING...</div>
+          </div>
         )}
-      </main>
+
+        {error && (
+          <div className="error-state">
+            <div className="error-text">ERROR: {error}</div>
+            <div className="error-help">Check your .env file has VITE_ICAL_URL set</div>
+          </div>
+        )}
+
+        {!loading && !error && upcomingEvents.length === 0 && (
+          <div className="empty-state">
+            <div className="empty-text">NO EVENTS</div>
+            <div className="empty-help">Add events to your calendar or adjust filters</div>
+          </div>
+        )}
+
+        {!loading && !error && upcomingEvents.map((event, index) => (
+          <div
+            key={event.id}
+            className={`event-card event-card-${index} event-type-${event.type}`}
+          >
+            <div className="event-type-label">{event.type}</div>
+            <div className="event-date">
+              {format(new Date(event.start), 'MMM d')}
+            </div>
+            <h2 className="event-title">{event.title}</h2>
+            <div className="event-time">
+              {event.allDay ? 'ALL DAY' : format(new Date(event.start), 'h:mm a')}
+            </div>
+            {event.location && (
+              <div className="event-location">{event.location}</div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Bottom Corner Text */}
+      <div className="bottom-corner">
+        <div className="reload-hint" onClick={loadEvents}>
+          REFRESH
+        </div>
+      </div>
     </div>
   )
 }
