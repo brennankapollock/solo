@@ -1,10 +1,23 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import { fetchICalEvents } from './utils/icalFetcher'
-import { format, isToday, isFuture } from 'date-fns'
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+  eachDayOfInterval,
+  isSameMonth,
+  isSameDay,
+  addMonths,
+  subMonths,
+  isWeekend
+} from 'date-fns'
 
 function App() {
   const [events, setEvents] = useState([])
+  const [currentMonth, setCurrentMonth] = useState(new Date())
   const [activeFilter, setActiveFilter] = useState('all')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -19,9 +32,7 @@ function App() {
     try {
       setLoading(true)
       setError(null)
-      console.log('Fetching from:', ICAL_URL)
       const fetchedEvents = await fetchICalEvents(ICAL_URL)
-      console.log('Fetched events:', fetchedEvents)
       setEvents(fetchedEvents)
     } catch (error) {
       console.error('Error loading events:', error)
@@ -31,10 +42,17 @@ function App() {
     }
   }
 
-  const upcomingEvents = events
-    .filter(e => isFuture(new Date(e.start)) || isToday(new Date(e.start)))
-    .filter(e => activeFilter === 'all' || e.type === activeFilter)
-    .slice(0, 6) // Show max 6 events to fit screen
+  const monthStart = startOfMonth(currentMonth)
+  const monthEnd = endOfMonth(currentMonth)
+  const calendarStart = startOfWeek(monthStart)
+  const calendarEnd = endOfWeek(monthEnd)
+  const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd })
+
+  const getEventsForDay = (day) => {
+    return events
+      .filter(e => isSameDay(new Date(e.start), day))
+      .filter(e => activeFilter === 'all' || e.type === activeFilter)
+  }
 
   const eventTypes = [
     { id: 'all', label: 'ALL' },
@@ -45,24 +63,24 @@ function App() {
   ]
 
   return (
-    <div className="magazine">
-      {/* Giant Title Overlay */}
-      <div className="title-overlay">
-        <h1 className="mega-title">EVENTS</h1>
+    <div className="calendar">
+      {/* Header */}
+      <div className="calendar-header">
+        <button className="nav-arrow" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
+          ←
+        </button>
+        <h1 className="month-title">{format(currentMonth, 'MMMM')}</h1>
+        <button className="nav-arrow" onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}>
+          →
+        </button>
       </div>
 
-      {/* Top Bar */}
-      <div className="top-bar">
-        <div className="issue">ISSUE 001</div>
-        <div className="tagline">NIGHTLIFE / MUSIC / CULTURE</div>
-      </div>
-
-      {/* Filter Tabs */}
-      <div className="filter-tabs">
+      {/* Filters */}
+      <div className="filter-bar">
         {eventTypes.map(type => (
           <button
             key={type.id}
-            className={`filter-tab ${activeFilter === type.id ? 'active' : ''}`}
+            className={`filter-pill ${activeFilter === type.id ? 'active' : ''}`}
             onClick={() => setActiveFilter(type.id)}
           >
             {type.label}
@@ -70,54 +88,55 @@ function App() {
         ))}
       </div>
 
-      {/* Main Content Grid */}
-      <div className="content-grid">
-        {loading && (
-          <div className="loading-state">
-            <div className="loading-text">LOADING...</div>
-          </div>
-        )}
-
-        {error && (
-          <div className="error-state">
-            <div className="error-text">ERROR: {error}</div>
-            <div className="error-help">Check your .env file has VITE_ICAL_URL set</div>
-          </div>
-        )}
-
-        {!loading && !error && upcomingEvents.length === 0 && (
-          <div className="empty-state">
-            <div className="empty-text">NO EVENTS</div>
-            <div className="empty-help">Add events to your calendar or adjust filters</div>
-          </div>
-        )}
-
-        {!loading && !error && upcomingEvents.map((event, index) => (
-          <div
-            key={event.id}
-            className={`event-card event-card-${index} event-type-${event.type}`}
-          >
-            <div className="event-type-label">{event.type}</div>
-            <div className="event-date">
-              {format(new Date(event.start), 'MMM d')}
-            </div>
-            <h2 className="event-title">{event.title}</h2>
-            <div className="event-time">
-              {event.allDay ? 'ALL DAY' : format(new Date(event.start), 'h:mm a')}
-            </div>
-            {event.location && (
-              <div className="event-location">{event.location}</div>
-            )}
+      {/* Calendar Grid */}
+      <div className="calendar-grid">
+        {/* Weekday Headers */}
+        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, i) => (
+          <div key={day} className={`weekday-header ${i === 0 || i === 6 ? 'weekend' : ''}`}>
+            {day}
           </div>
         ))}
+
+        {/* Date Cells */}
+        {days.map(day => {
+          const dayEvents = getEventsForDay(day)
+          const isCurrentMonth = isSameMonth(day, currentMonth)
+          const isWeekendDay = isWeekend(day)
+
+          return (
+            <div
+              key={day.toString()}
+              className={`date-cell ${!isCurrentMonth ? 'other-month' : ''} ${isWeekendDay ? 'weekend' : ''}`}
+            >
+              <div className="date-number">{format(day, 'd')}</div>
+              <div className="event-list">
+                {dayEvents.map(event => (
+                  <div key={event.id} className={`event-item type-${event.type}`}>
+                    <span className="event-time">
+                      {event.allDay ? '' : format(new Date(event.start), 'h:mm a')}
+                    </span>
+                    <span className="event-name">{event.title}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )
+        })}
       </div>
 
-      {/* Bottom Corner Text */}
-      <div className="bottom-corner">
-        <div className="reload-hint" onClick={loadEvents}>
-          REFRESH
+      {/* Loading/Error States */}
+      {loading && (
+        <div className="overlay-state">
+          <div className="state-message">Loading...</div>
         </div>
-      </div>
+      )}
+
+      {error && (
+        <div className="overlay-state">
+          <div className="state-message error">{error}</div>
+          <div className="state-help">Check console for details</div>
+        </div>
+      )}
     </div>
   )
 }
