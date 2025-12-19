@@ -1,0 +1,129 @@
+.app {
+  min-height: 100vh;
+  background: var(--white);
+}
+
+.app-header {
+  background: var(--black);
+  color: var(--white);
+  padding: 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 4px solid var(--red);
+}
+
+.app-title {
+  font-size: clamp(3rem, 10vw, 8rem);
+  line-height: 0.9;
+  margin-bottom: 2rem;
+  letter-spacing: -0.05em;
+}
+
+.view-switcher {
+  display: flex;
+  gap: 0;
+  margin-bottom: 2rem;
+  border: 3px solid var(--white);
+  width: fit-content;
+}
+
+.view-btn {
+  background: var(--black);
+  color: var(--white);
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.2s;
+  border-right: 2px solid var(--white);
+}
+
+.view-btn:last-child {
+  border-right: none;
+}
+
+.view-btn:hover {
+  background: var(--white);
+  color: var(--black);
+}
+
+.view-btn.active {
+  background: var(--red);
+  color: var(--white);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.filter-btn {
+  background: transparent;
+  color: var(--white);
+  border: 2px solid var(--white);
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover {
+  background: var(--white);
+  color: var(--black);
+}
+
+.filter-btn.active {
+  background: var(--red);
+  border-color: var(--red);
+  color: var(--white);
+}
+
+.app-main {
+  padding: 2rem;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+.loading {
+  font-size: 2rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 4rem;
+  letter-spacing: 0.1em;
+}
+
+@media (max-width: 768px) {
+  .app-header {
+    padding: 1rem;
+  }
+
+  .app-title {
+    font-size: clamp(2rem, 12vw, 4rem);
+    margin-bottom: 1rem;
+  }
+
+  .view-switcher {
+    width: 100%;
+  }
+
+  .view-btn {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+  }
+
+  .filter-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .app-main {
+    padding: 1rem;
+  }
+}

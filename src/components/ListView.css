@@ -1,0 +1,175 @@
+.list-view {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.list-section {
+  margin-bottom: 4rem;
+}
+
+.list-section.past {
+  opacity: 0.6;
+}
+
+.list-section-title {
+  font-size: clamp(2rem, 5vw, 4rem);
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 4px solid var(--black);
+}
+
+.list-section.past .list-section-title {
+  border-bottom-color: var(--gray);
+}
+
+.list-events {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.list-event {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 2rem;
+  padding: 2rem;
+  background: var(--white);
+  border: 3px solid var(--black);
+  transition: all 0.2s;
+}
+
+.list-event:hover {
+  transform: translateX(8px);
+  box-shadow: -8px 8px 0 var(--black);
+}
+
+.list-event.event-concert {
+  border-color: var(--red);
+}
+
+.list-event.event-concert:hover {
+  box-shadow: -8px 8px 0 var(--red);
+}
+
+.list-event.event-rave {
+  border-color: var(--black);
+}
+
+.list-event.event-festival {
+  border-color: var(--gray);
+}
+
+.list-event.event-festival:hover {
+  box-shadow: -8px 8px 0 var(--gray);
+}
+
+.list-event.event-club {
+  border-color: var(--dark-gray);
+}
+
+.list-event.event-club:hover {
+  box-shadow: -8px 8px 0 var(--dark-gray);
+}
+
+.list-event-date {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.date-label {
+  font-size: 1.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+  font-family: var(--font-display);
+}
+
+.date-time {
+  font-size: 1.2rem;
+  font-weight: 700;
+  opacity: 0.7;
+}
+
+.list-event-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.list-event-type {
+  font-size: 0.9rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  opacity: 0.5;
+}
+
+.list-event-title {
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  line-height: 1.1;
+  margin-bottom: 0.5rem;
+}
+
+.list-event-location {
+  font-size: 1.1rem;
+  font-weight: 700;
+  opacity: 0.7;
+}
+
+.list-event-description {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  line-height: 1.4;
+  opacity: 0.8;
+}
+
+.no-events-message {
+  font-size: 3rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 4rem;
+  opacity: 0.3;
+  font-family: var(--font-display);
+}
+
+@media (max-width: 768px) {
+  .list-event {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+
+  .list-event:hover {
+    transform: translateX(4px);
+    box-shadow: -4px 4px 0 var(--black);
+  }
+
+  .list-event.event-concert:hover {
+    box-shadow: -4px 4px 0 var(--red);
+  }
+
+  .list-event.event-festival:hover {
+    box-shadow: -4px 4px 0 var(--gray);
+  }
+
+  .list-event.event-club:hover {
+    box-shadow: -4px 4px 0 var(--dark-gray);
+  }
+
+  .date-label {
+    font-size: 1.2rem;
+  }
+
+  .date-time {
+    font-size: 1rem;
+  }
+
+  .list-section-title {
+    font-size: 2rem;
+  }
+}
