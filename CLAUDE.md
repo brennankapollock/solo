@@ -4,48 +4,88 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a task and project management application designed specifically for solo users. The project is currently in the planning phase with only a PRD (Product Requirements Document) available.
+This is a public event calendar web application designed to showcase curated events (concerts, raves, festivals, club events) with a bold, high-contrast design inspired by The Face magazine aesthetic.
 
 ## Current State
 
-The repository contains only a Product Requirements Document (PRD.md) that outlines the vision for a streamlined personal productivity tool. No source code, build tools, or development infrastructure has been implemented yet.
+The repository contains a fully functional React + Vite web application with:
+- Three calendar view modes (Month, Week, List)
+- iCloud calendar integration via .ics parsing
+- Event type filtering system
+- Responsive design for desktop and mobile
+- The Face magazine-inspired aesthetic
 
-## Key Product Concepts
+## Technical Stack
 
-**Vision**: A clean, fast, and intuitive personal productivity tool that combines task management and project organization without team collaboration features.
+**Frontend**:
+- React 18.3
+- Vite 6.0 (build tool and dev server)
+- ical.js (iCalendar parsing)
+- date-fns (date manipulation)
 
-**Core Features Planned**:
-- Task Management with natural language input
-- Project Management with hierarchies and milestones
-- Time Blocking and Calendar Integration
-- Smart Lists and Custom Lists
-- Offline-first architecture
-
-**Technical Stack Recommendations** (from PRD):
-- Frontend: React/Vue.js for web, Swift/SwiftUI for native apps
-- Backend: Node.js/Deno or Go
-- Database: PostgreSQL with Redis caching
-- State Management: Zustand or Valtio
-
-**Target Platforms**:
-- Web Application (PWA)
-- Native Mac Application
-- Native iOS Application
+**Styling**:
+- Pure CSS with custom properties
+- Anton font (display/headings)
+- Roboto Condensed font (body text)
 
 ## Design Principles
 
-1. **Speed First**: All actions should complete in <100ms
-2. **Keyboard Friendly**: Mouse optional for power users
-3. **Information Density**: Show more, scroll less
-4. **Offline-First**: Full functionality without internet
-5. **No Feature Bloat**: Focused on solo user needs only
+1. **Bold Typography**: Large, uppercase headings using Anton font
+2. **High Contrast**: Strict black and white color scheme with red accents
+3. **Information Density**: Maximum content visibility with minimal scrolling
+4. **Brutalist Aesthetic**: Raw, unpolished, magazine-style layout
+5. **Responsive First**: Mobile and desktop optimized
 
-## Development Notes
+## Key Files
 
-This project is inspired by Linear and Things 3, prioritizing:
-- Keyboard-first navigation with command palette (Cmd+K)
-- Fast search across all content
-- Clean, minimal interface design
-- Natural planning hierarchy (Projects → Areas → Tasks)
+- `src/App.jsx` - Main application component with view switching and filtering
+- `src/components/MonthView.jsx` - Calendar month grid view
+- `src/components/WeekView.jsx` - Week-based event view
+- `src/components/ListView.jsx` - Chronological list of events
+- `src/utils/icalFetcher.js` - iCloud calendar fetching and parsing
+- `src/App.css` - Main application styles with The Face aesthetic
+- `src/index.css` - Global styles and CSS variables
 
-When implementing features, refer to the detailed user stories and MVP scope in PRD.md to maintain focus on core solo-user functionality.
+## Event Type System
+
+Events are automatically categorized by keywords in their titles:
+- **concert** - Live music performances
+- **rave** - Electronic music events
+- **festival** - Multi-day music festivals
+- **club** - Club nights and DJ sets
+- **other** - Uncategorized events
+
+Categories can be customized in `src/utils/icalFetcher.js`
+
+## iCloud Calendar Integration
+
+The app fetches events from a public iCloud calendar URL (.ics format):
+1. URL is configured via `VITE_ICAL_URL` environment variable
+2. Events are fetched and parsed using ical.js
+3. Parsed events are sorted by start date
+4. Events are categorized by type based on title keywords
+
+## Development Commands
+
+```bash
+npm install          # Install dependencies
+npm run dev          # Start development server (port 3000)
+npm run build        # Build for production
+npm run preview      # Preview production build
+```
+
+## Color Variables
+
+- `--black: #000000` - Primary text and borders
+- `--white: #ffffff` - Background and inverse text
+- `--red: #ff0000` - Accent color for emphasis
+- `--gray: #808080` - Secondary elements
+- `--light-gray: #d0d0d0` - Backgrounds
+- `--dark-gray: #2a2a2a` - Dark accents
+
+## Notes for Future Development
+
+- Event data refreshes on page load (consider adding auto-refresh)
+- Event types are inferred from titles (could be enhanced with custom fields)
+- No backend - purely client-side application
+- Works with any public .ics calendar feed, not just iCloud

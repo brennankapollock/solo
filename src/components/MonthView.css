@@ -1,0 +1,162 @@
+.month-view {
+  width: 100%;
+}
+
+.month-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 4px solid var(--black);
+}
+
+.month-title {
+  font-size: clamp(2rem, 5vw, 4rem);
+  text-align: center;
+  flex: 1;
+}
+
+.nav-btn {
+  font-size: 2rem;
+  font-weight: 900;
+  padding: 0.5rem 1.5rem;
+  background: var(--black);
+  color: var(--white);
+  transition: all 0.2s;
+  border: 3px solid var(--black);
+}
+
+.nav-btn:hover {
+  background: var(--white);
+  color: var(--black);
+}
+
+.weekday-labels {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 2px;
+  background: var(--black);
+}
+
+.weekday-label {
+  background: var(--black);
+  color: var(--white);
+  padding: 1rem;
+  text-align: center;
+  font-weight: 900;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  background: var(--black);
+  border: 3px solid var(--black);
+}
+
+.calendar-day {
+  background: var(--white);
+  min-height: 120px;
+  padding: 0.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.calendar-day.other-month {
+  background: var(--light-gray);
+  opacity: 0.5;
+}
+
+.calendar-day.today {
+  background: var(--red);
+  color: var(--white);
+}
+
+.calendar-day.today .day-number {
+  color: var(--white);
+}
+
+.day-number {
+  font-size: 1.5rem;
+  font-weight: 900;
+  margin-bottom: 0.5rem;
+  font-family: var(--font-display);
+}
+
+.day-events {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.event-item {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-left: 4px solid var(--black);
+  background: var(--light-gray);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-concert {
+  border-left-color: var(--red);
+  background: rgba(255, 0, 0, 0.1);
+}
+
+.event-rave {
+  border-left-color: var(--black);
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.event-festival {
+  border-left-color: var(--gray);
+  background: rgba(128, 128, 128, 0.1);
+}
+
+.event-club {
+  border-left-color: var(--dark-gray);
+  background: rgba(42, 42, 42, 0.1);
+}
+
+.event-time {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+.event-title {
+  font-weight: 900;
+}
+
+@media (max-width: 768px) {
+  .calendar-day {
+    min-height: 80px;
+    padding: 0.25rem;
+  }
+
+  .day-number {
+    font-size: 1rem;
+  }
+
+  .event-item {
+    font-size: 0.6rem;
+    padding: 0.2rem 0.3rem;
+  }
+
+  .weekday-label {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .nav-btn {
+    padding: 0.5rem 1rem;
+    font-size: 1.5rem;
+  }
+}
